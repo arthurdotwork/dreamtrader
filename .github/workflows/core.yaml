@@ -10,12 +10,6 @@ on:
     branches:
       - '**'
 
-env:
-  GOLANG_VERSION: "1.22"
-  TERN_VERSION: "2.1.1"
-  GOTESTSUM_VERSION: "1.10.1"
-  IMAGE: ghcr.io/arthurdotwork/dreamtrader/core
-
 jobs:
   ci:
     name: Continuous Integration
@@ -68,6 +62,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
-        run: ./deploy.sh ${{ env.IMAGE }} -f Dockerfile --build-arg GOLANG_VERSION=${{ env.GOLANG_VERSION }} .
-        working-directory: apps/core
+        run: task core:deploy

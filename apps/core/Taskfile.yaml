@@ -14,14 +14,6 @@ env:
   IMAGE: dreamtrader/core:local
 
 tasks:
-  install:
-    deps:
-      - migrate:install
-      - lint:install
-      - test:install
-    cmds:
-      - task: setup
-
   migrate:install:
     status:
       - test -f $GOPATH/bin/tern
@@ -54,7 +46,6 @@ tasks:
 
   run:
     deps:
-      - install
       - migrate:up
     cmds:
       - go run main.go
@@ -86,7 +77,3 @@ tasks:
   docker:package:
     cmds:
       - docker build -t {{.IMAGE}} .
-
-  setup:
-    cmds:
-      - ./setup.sh

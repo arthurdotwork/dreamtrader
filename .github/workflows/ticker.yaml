@@ -10,11 +10,7 @@ on:
     branches:
       - '**'
 
-env:
-  IMAGE: ghcr.io/arthurdotwork/dreamtrader/ticker
-
 jobs:
-
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -29,6 +25,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
-        run: ./deploy.sh ${{ env.IMAGE }} -f Dockerfile .
-        working-directory: apps/ticker
+        run: task ticker:deploy
