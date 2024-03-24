@@ -9,6 +9,7 @@ COPY pnpm-lock.yaml /app
 RUN pnpm install
 
 COPY . /app
+RUN pnpm tsr generate
 RUN pnpm build
 
 FROM nginx:alpine
