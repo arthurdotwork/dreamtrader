@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/arthurdotwork/dreamtrader/core/internal/entity"
 	"github.com/arthurdotwork/dreamtrader/core/internal/request"
 	"github.com/arthurdotwork/dreamtrader/core/internal/service"
 	"github.com/arthurdotwork/dreamtrader/core/internal/store"
@@ -29,15 +28,7 @@ func TestRegister(t *testing.T) {
 	userStore := store.NewUserStore(txn)
 	registerService := service.NewRegisterService(userStore)
 
-	user := entity.User{
-		Email:     "mail@domain.tld",
-		Password:  "password",
-		CreatedAt: time.Now().UTC(),
-		UpdatedAt: time.Now().UTC(),
-	}
-
-	createdUser, err := userStore.CreateUser(ctx, user)
-	require.NoError(t, err)
+	createdUser := test.CreateUser(ctx, t, txn)
 
 	t.Run("it should return no error if the user already exists", func(t *testing.T) {
 		user, err := registerService.Register(ctx, request.CreateUserRequest{Email: "mail@domain.tld", Password: "password"})
