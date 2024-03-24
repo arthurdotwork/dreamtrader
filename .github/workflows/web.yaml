@@ -53,5 +53,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        run: ./deploy.sh ${{ env.IMAGE }} -f Dockerfile
+        run: ./deploy.sh ${{ env.IMAGE }} -f Dockerfile .
         working-directory: apps/web
