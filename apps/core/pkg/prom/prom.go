@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-const defaultNamespace = "dreamtrader/core"
+const defaultNamespace = "core"
 
 func CounterFactory(name string, help string) prometheus.Counter {
 	collector := prometheus.NewCounter(prometheus.CounterOpts{

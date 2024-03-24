@@ -1,0 +1,57 @@
+name: Web Pipeline
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*.*.*'
+  pull_request:
+    branches:
+      - '**'
+
+env:
+  IMAGE: ghcr.io/arthurdotwork/dreamtrader/web
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '>=20'
+      - name: install pnpm
+        run: npm install -g pnpm
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run install
+        run: task install
+        working-directory: apps/web
+      - name: Run lint
+        run: task lint
+        working-directory: apps/web
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    needs: [ ci ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        run: ./deploy.sh ${{ env.IMAGE }} -f Dockerfile
+        working-directory: apps/web
