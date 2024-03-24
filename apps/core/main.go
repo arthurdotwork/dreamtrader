@@ -59,12 +59,13 @@ func run(parent context.Context) error {
 	}
 
 	transactor := psql.NewTransactor(db(ctx))
+	_ = transactor
 
 	// stores
-	dummyStore := store.NewDummyStore(db)
+	userStore := store.NewUserStore(db)
 
 	// services
-	dummyService := service.NewDummyService(dummyStore, transactor)
+	registerService := service.NewRegisterService(userStore)
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
@@ -75,7 +76,11 @@ func run(parent context.Context) error {
 	router.Use(middleware.InstrumentedMiddleware())
 	router.GET("/livez", handler.LivenessProbeHandler())
 	router.GET("/readyz", handler.ReadinessProbeHandler(parent))
-	router.GET("/dummy", handler.DummyHandler(dummyService))
+
+	apiRouter := router.Group("/api")
+	v1Router := apiRouter.Group("/v1")
+
+	v1Router.POST("/register", handler.RegisterHandler(registerService))
 
 	httpServer := &http.Server{
 		Addr:              env("HTTP_ADDR", "0.0.0.0:8080"),

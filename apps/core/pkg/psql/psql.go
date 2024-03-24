@@ -2,6 +2,7 @@ package psql
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -14,6 +15,8 @@ import (
 type Queryable = sqalx.Node
 
 type DBGetter func(context.Context) Queryable
+
+var ErrNoRows = sql.ErrNoRows
 
 func Connect(ctx context.Context, username string, password string, host string, port string, database string) (func(context.Context) Queryable, error) {
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", username, password, host, port, database)

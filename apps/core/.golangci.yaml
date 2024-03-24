@@ -20,6 +20,7 @@ linters:
     - goerr113 # broken
     - tparallel # forces to use parallel tests which is not always possible
     - contextcheck # forces to pass context when it is not always necessary
+    - perfsprint # forces to use fmt.Sprintf instead of fmt.Sprint
 
 issues:
   exclude-rules:
