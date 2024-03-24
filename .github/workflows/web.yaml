@@ -10,9 +10,6 @@ on:
     branches:
       - '**'
 
-env:
-  IMAGE: ghcr.io/arthurdotwork/dreamtrader/web
-
 jobs:
   ci:
     name: Continuous Integration
@@ -31,11 +28,9 @@ jobs:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run install
-        run: task install
-        working-directory: apps/web
+        run: task web:install
       - name: Run lint
-        run: task lint
-        working-directory: apps/web
+        run: task web:lint
 
   deploy:
     name: Deploy
@@ -52,6 +47,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push
-        run: ./deploy.sh ${{ env.IMAGE }} -f Dockerfile .
-        working-directory: apps/web
+        run: task web:deploy

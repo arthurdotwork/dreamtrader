@@ -2,11 +2,53 @@
 
 version: '3'
 
-vars:
-  GREETING: Hello, World!
+env:
+  IMAGE_BASE: ghcr.io/arthurdotwork/dreamtrader
 
 tasks:
-  default:
+  # Core related tasks
+  core:lint:
     cmds:
-      - echo "{{.GREETING}}"
-    silent: true
+      - task lint
+    dir: apps/core
+  core:test:
+    cmds:
+      - task test
+    dir: apps/core
+  core:run:
+    cmds:
+      - task run
+    dir: apps/core
+  core:deploy:
+    env:
+      IMAGE:
+        sh: echo {{.IMAGE_BASE}}/core
+    cmds:
+      - ./deploy.sh $IMAGE -f Dockerfile .
+    dir: apps/core
+
+  # Web related tasks
+  web:install:
+    cmds:
+      - task install
+    dir: apps/web
+  web:lint:
+    cmds:
+      - task lint
+    dir: apps/web
+  web:deploy:
+    env:
+      IMAGE:
+        sh: echo {{.IMAGE_BASE}}/web
+    cmds:
+      - ./deploy.sh $IMAGE -f Dockerfile .
+    dir: apps/web
+
+  # Ticker related tasks
+  ticker:deploy:
+    env:
+      IMAGE:
+        sh: echo {{.IMAGE_BASE}}/ticker
+    cmds:
+      - ./deploy.sh $IMAGE -f Dockerfile .
+    dir: apps/ticker
