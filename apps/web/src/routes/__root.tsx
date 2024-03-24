@@ -1,29 +1,25 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/router-devtools'
+import {
+    createRootRouteWithContext,
+    Outlet
+} from '@tanstack/react-router'
+import {TanStackRouterDevtools} from '@tanstack/router-devtools'
 import {Toaster} from "@/components/ui/toaster.tsx";
+import {type AuthContextType} from "@/contexts/auth.tsx";
 
-export const Route = createRootRoute({
-    component: () => (
-        <>
-            <nav className="p-6">
-                <ul className="flex justify-end gap-4">
-                    <li>
-                        <Link to="/" className="[&.active]:font-bold">
-                            Home
-                        </Link>{' '}
-                    </li>
-                    <li>
-                        <Link to="/assets" className="[&.active]:font-bold">
-                            Assets
-                        </Link>
-                    </li>
-                </ul>
+interface RouterContext {
+    auth: AuthContextType;
+}
 
-            </nav>
-            <hr />
-            <Outlet />
-            <Toaster />
-            <TanStackRouterDevtools />
-        </>
-    ),
+export const Route = createRootRouteWithContext<RouterContext>()({
+    component: () => {
+        return (
+            (
+                <>
+                    <Outlet/>
+                    <Toaster/>
+                    <TanStackRouterDevtools/>
+                </>
+            )
+        )
+    },
 })

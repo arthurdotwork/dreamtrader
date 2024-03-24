@@ -63,9 +63,11 @@ func run(parent context.Context) error {
 
 	// stores
 	userStore := store.NewUserStore(db)
+	authStore := store.NewAuthStore(db)
 
 	// services
 	registerService := service.NewRegisterService(userStore)
+	authService := service.NewAuthService(authStore, userStore)
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
@@ -81,6 +83,7 @@ func run(parent context.Context) error {
 	v1Router := apiRouter.Group("/v1")
 
 	v1Router.POST("/register", handler.RegisterHandler(registerService))
+	v1Router.POST("/authenticate", handler.AuthenticateHandler(authService))
 
 	httpServer := &http.Server{
 		Addr:              env("HTTP_ADDR", "0.0.0.0:8080"),
