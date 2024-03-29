@@ -25,7 +25,8 @@ func AuthenticateHandler(authService service.AuthService) gin.HandlerFunc {
 
 		accessToken, refreshToken, err := authService.Authenticate(ctx, req)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			// do not return any content to avoid leaking information
+			c.JSON(http.StatusInternalServerError, gin.H{})
 			return
 		}
 

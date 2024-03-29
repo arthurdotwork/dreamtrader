@@ -18,6 +18,7 @@ import (
 	"github.com/arthurdotwork/dreamtrader/core/pkg/psql"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
 )
@@ -32,6 +33,11 @@ func main() {
 	go func() {
 		<-done
 		cancel()
+	}()
+
+	zerolog.DefaultContextLogger = func() *zerolog.Logger {
+		logger := log.With().Caller().Logger()
+		return &logger
 	}()
 
 	if err := run(ctx); err != nil {
@@ -83,7 +89,9 @@ func run(parent context.Context) error {
 	v1Router := apiRouter.Group("/v1")
 
 	v1Router.POST("/register", handler.RegisterHandler(registerService))
-	v1Router.POST("/authenticate", handler.AuthenticateHandler(authService))
+	v1Router.POST("/auth", handler.AuthenticateHandler(authService))
+	v1Router.POST("/auth/verify", handler.VerifyAuthenticationHandler(authService))
+	v1Router.POST("/auth/refresh", handler.RefreshAuthenticationHandler(authService))
 
 	httpServer := &http.Server{
 		Addr:              env("HTTP_ADDR", "0.0.0.0:8080"),
