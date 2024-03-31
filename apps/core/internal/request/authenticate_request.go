@@ -18,7 +18,7 @@ func (r AuthenticateRequest) Validate() error {
 		errs = append(errs, fmt.Errorf("email is invalid"))
 	}
 
-	if len(r.Password) < 8 {
+	if len(strings.TrimSpace(r.Password)) < 8 {
 		errs = append(errs, fmt.Errorf("password is too short"))
 	}
 
