@@ -21,15 +21,7 @@ func TestValidateAuthenticationRequest(t *testing.T) {
 	t.Run("it should return an error if the password is too short", func(t *testing.T) {
 		t.Parallel()
 
-		req := request.AuthenticateRequest{Email: "mail@domain.tld", Password: "short"}
-		err := req.Validate()
-		require.Error(t, err)
-	})
-
-	t.Run("it should return an error if the password is made of empty spaces", func(t *testing.T) {
-		t.Parallel()
-
-		req := request.AuthenticateRequest{Email: "mail@domain.tld", Password: "        "}
+		req := request.AuthenticateRequest{Email: "mail@domain.tld", Password: "short      "}
 		err := req.Validate()
 		require.Error(t, err)
 	})
